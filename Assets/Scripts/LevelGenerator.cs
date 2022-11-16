@@ -9,7 +9,7 @@ public class LevelGenerator : MonoBehaviour
     public GameObject coinPrefab;
     public GameObject player;
     
-    private float sizeX = 25f;
+    private float sizeX = 10f;
     private float sizeY = 10f;
 
     public int stage = 0;
