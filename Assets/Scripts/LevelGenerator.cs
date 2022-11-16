@@ -74,6 +74,7 @@ public class LevelGenerator : MonoBehaviour
         bool completed = false;
         bool isGoingBackwards = false;
 
+        // Remove walls to form maze
         while (!completed) {
             // Debug.Log("currentNode is " + currentNode);
 
@@ -107,12 +108,31 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // Generate side borders
-        borders[0] = Instantiate(wallPrefab, new Vector2(sizeX/2 - 0.5f, sizeY), new Quaternion());
+        borders[0] = Instantiate(wallPrefab, new Vector2((sizeX * stage) + (sizeX/2) - 0.5f, sizeY), new Quaternion());
         borders[0].transform.localScale = new Vector2(sizeX+ 0.25f, 1f);
         borders[0].name = "Border 1";
-        borders[1] = Instantiate(wallPrefab, new Vector2(sizeX/2 - 0.5f, -1f), new Quaternion());
+        borders[1] = Instantiate(wallPrefab, new Vector2((sizeX * stage) + (sizeX/2) - 0.5f, -1f), new Quaternion());
         borders[1].transform.localScale = new Vector2(sizeX + 0.25f, 1f);
         borders[1].name = "Border 2";
+
+        // Generate end borders
+        int entrance = Random.Range(1, (int)sizeY);
+
+        int aboveEntrance = (10 - entrance);
+        int centerAboveEntrance = entrance + aboveEntrance/2;
+
+        GameObject endBorderTop = Instantiate(wallPrefab, new Vector2(sizeX * (stage+1) - 0.5f, centerAboveEntrance), new Quaternion());
+        endBorderTop.transform.localScale = new Vector2(0.125f, aboveEntrance);
+        endBorderTop.name = "end border top";
+
+        int belowEntrance = entrance;
+        int centerBelowEntrance = belowEntrance/2;
+
+        GameObject endBorderBottom = Instantiate(wallPrefab, new Vector2(sizeX * (stage+1) - 0.5f, centerBelowEntrance), new Quaternion());
+        endBorderBottom.transform.localScale = new Vector2(0.125f, belowEntrance);
+        endBorderBottom.name = "end border bottom";
+
+        Debug.Log(entrance + " " + aboveEntrance + " " + centerAboveEntrance + " " + belowEntrance + " " + centerBelowEntrance);
     }
 
     List<Vector2> GetNeighbourNodes(Vector2 Node, List<Vector2> Visited, Vector2[,] nodes) {
