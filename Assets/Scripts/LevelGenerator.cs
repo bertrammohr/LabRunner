@@ -12,6 +12,7 @@ public class LevelGenerator : MonoBehaviour
     private float sizeX = 10f;
     private float sizeY = 10f;
 
+    private int lastY = 0;
     public int stage = 0;
 
     void Update() {
@@ -67,7 +68,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // Generate connections
-        Vector2 currentNode = nodes[(int)sizeX * stage, 0]; // THIS IS WHERE THE NEXT MAZE STARTS
+        Vector2 currentNode = nodes[(int)sizeX * stage, lastY]; // THIS IS WHERE THE NEXT MAZE STARTS
         List<Vector2> Path = new List<Vector2>();
         List<Vector2> Visited = new List<Vector2>();
 
@@ -116,23 +117,36 @@ public class LevelGenerator : MonoBehaviour
         borders[1].name = "Border 2";
 
         // Generate end borders
-        int entrance = Random.Range(1, (int)sizeY);
+        float entrance = (float)Random.Range(0, (int)sizeY - 1);
+        lastY = (int)entrance;
 
-        int aboveEntrance = (10 - entrance);
-        int centerAboveEntrance = entrance + aboveEntrance/2;
+        float topBorderSize;
+        float topBorderCenter;
+        float bottomBorderSize;
+        float bottomBorderCenter;
 
-        GameObject endBorderTop = Instantiate(wallPrefab, new Vector2(sizeX * (stage+1) - 0.5f, centerAboveEntrance), new Quaternion());
-        endBorderTop.transform.localScale = new Vector2(0.125f, aboveEntrance);
+        if (entrance % 2 == 0) 
+        { //even
+            topBorderSize = (sizeY-1) - entrance;
+            topBorderCenter = ( (entrance+1) + (sizeY-1) ) / 2;
+            bottomBorderSize = entrance;
+            bottomBorderCenter = entrance/2 - 0.5f;
+        } 
+        else 
+        { //uneven
+            topBorderSize = (sizeY-1) - entrance;
+            topBorderCenter = entrance + 0.5f + (topBorderSize/2);
+            bottomBorderSize = entrance;
+            bottomBorderCenter = (bottomBorderSize-1) / 2;
+        }
+
+        GameObject endBorderTop = Instantiate(wallPrefab, new Vector2(sizeX * (stage+1) - 0.5f, topBorderCenter), new Quaternion());
+        endBorderTop.transform.localScale = new Vector2(0.125f, topBorderSize);
         endBorderTop.name = "end border top";
 
-        int belowEntrance = entrance;
-        int centerBelowEntrance = belowEntrance/2;
-
-        GameObject endBorderBottom = Instantiate(wallPrefab, new Vector2(sizeX * (stage+1) - 0.5f, centerBelowEntrance), new Quaternion());
-        endBorderBottom.transform.localScale = new Vector2(0.125f, belowEntrance);
+        GameObject endBorderBottom = Instantiate(wallPrefab, new Vector2(sizeX * (stage+1) - 0.5f, bottomBorderCenter), new Quaternion());
+        endBorderBottom.transform.localScale = new Vector2(0.125f, bottomBorderSize);
         endBorderBottom.name = "end border bottom";
-
-        Debug.Log(entrance + " " + aboveEntrance + " " + centerAboveEntrance + " " + belowEntrance + " " + centerBelowEntrance);
     }
 
     List<Vector2> GetNeighbourNodes(Vector2 Node, List<Vector2> Visited, Vector2[,] nodes) {
