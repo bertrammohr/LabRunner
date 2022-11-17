@@ -5,7 +5,7 @@ using TMPro;
 
 public class PickupCoin : MonoBehaviour
 {
-    public TMP_Text coinCounter;
+    private TMP_Text coinCounter;
 
     private void Start() {
         coinCounter = GameObject.Find("CoinCounter").GetComponent<TMP_Text>();
